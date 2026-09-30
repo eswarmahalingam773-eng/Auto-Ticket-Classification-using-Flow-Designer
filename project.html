@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Auto Ticket Classification</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #eef2f7;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f3c88;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 120px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #1f3c88;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #162d68;
+        }
+
+        .flow {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f7fb;
+            border-radius: 10px;
+        }
+
+        .flow h2 {
+            color: #1f3c88;
+            margin-bottom: 15px;
+        }
+
+        .step {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-left: 5px solid #1f3c88;
+            border-radius: 5px;
+        }
+
+        #result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #eaf7ee;
+            border-radius: 10px;
+        }
+
+        #result h2 {
+            color: #16733a;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-item strong {
+            color: #333;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #1f3c88;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Auto Ticket Classification</h1>
+
+    <p class="subtitle">
+        Using Flow Designer Concept
+    </p>
+
+    <label>Ticket Number</label>
+    <input type="text" id="ticketNumber" placeholder="Example: INC001001">
+
+    <label>Ticket Description</label>
+    <textarea id="description"
+        placeholder="Example: My laptop is not connecting to WiFi"></textarea>
+
+    <label>Requested By</label>
+    <input type="text" id="user" placeholder="Enter user name">
+
+    <button onclick="classifyTicket()">
+        Automatically Classify Ticket
+    </button>
+
+    <div class="flow">
+
+        <h2>Flow Designer Process</h2>
+
+        <div class="step">
+            1️⃣ Trigger → New Ticket Created
+        </div>
+
+        <div class="step">
+            2️⃣ Read → Ticket Description
+        </div>
+
+        <div class="step">
+            3️⃣ Analyze → Identify Keywords
+        </div>
+
+        <div class="step">
+            4️⃣ Classification → Category & Priority
+        </div>
+
+        <div class="step">
+            5️⃣ Assignment → Select Assignment Group
+        </div>
+
+        <div class="step">
+            6️⃣ Update → Automatically Update Ticket
+        </div>
+
+    </div>
+
+    <div id="result">
+
+        <h2>Classification Result</h2>
+
+        <div class="result-item">
+            <strong>Ticket:</strong>
+            <span id="rTicket"></span>
+        </div>
+
+        <div class="result-item">
+            <strong>Category:</strong>
+            <span id="rCategory" class="badge"></span>
+        </div>
+
+        <div class="result-item">
+            <strong>Sub Category:</strong>
+            <span id="rSubCategory"></span>
+        </div>
+
+        <div class="result-item">
+            <strong>Priority:</strong>
+            <span id="rPriority" class="badge"></span>
+        </div>
+
+        <div class="result-item">
+            <strong>Assignment Group:</strong>
+            <span id="rGroup"></span>
+        </div>
+
+        <div class="result-item">
+            <strong>Action:</strong>
+            <span id="rAction"></span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function classifyTicket() {
+
+    let ticket = document.getElementById("ticketNumber").value;
+    let description =
+        document.getElementById("description").value.toLowerCase();
+
+    let user = document.getElementById("user").value;
+
+    if (ticket === "" || description === "") {
+        alert("Please enter Ticket Number and Description");
+        return;
+    }
+
+    let category = "General";
+    let subCategory = "Other";
+    let priority = "Medium";
+    let group = "Service Desk";
+    let action = "Assign to Service Desk";
+
+
+    // NETWORK CLASSIFICATION
+    if (
+        description.includes("wifi") ||
+        description.includes("internet") ||
+        description.includes("network") ||
+        description.includes("vpn") ||
+        description.includes("connection")
+    ) {
+
+        category = "Network";
+        subCategory = "Connectivity";
+        group = "Network Support";
+
+        if (
+            description.includes("down") ||
+            description.includes("not working") ||
+            description.includes("urgent")
+        ) {
+            priority = "High";
+        }
+
+        action = "Automatically assign to Network Support";
+
+    }
+
+
+    // HARDWARE CLASSIFICATION
+    else if (
+        description.includes("laptop") ||
+        description.includes("keyboard") ||
+        description.includes("mouse") ||
+        description.includes("printer") ||
+        description.includes("monitor")
+    ) {
+
+        category = "Hardware";
+        subCategory = "Device Issue";
+        group = "Hardware Support";
+
+        if (
+            description.includes("broken") ||
+            description.includes("not working")
+        ) {
+            priority = "High";
+        }
+
+        action = "Automatically assign to Hardware Support";
+
+    }
+
+
+    // SOFTWARE CLASSIFICATION
+    else if (
+        description.includes("software") ||
+        description.includes("application") ||
+        description.includes("app") ||
+        description.includes("install") ||
+        description.includes("error")
+    ) {
+
+        category = "Software";
+        subCategory = "Application Issue";
+        group = "Application Support";
+
+        priority = "Medium";
+
+        action = "Automatically assign to Application Support";
+
+    }
+
+
+    // PASSWORD / ACCESS
+    else if (
+        description.includes("password") ||
+        description.includes("login") ||
+        description.includes("account") ||
+        description.includes("access")
+    ) {
+
+        category = "Access";
+        subCategory = "Login / Password";
+        group = "Identity & Access Management";
+
+        priority = "High";
+
+        action = "Automatically assign to IAM Team";
+
+    }
+
+
+    // SECURITY
+    else if (
+        description.includes("virus") ||
+        description.includes("malware") ||
+        description.includes("hacked") ||
+        description.includes("security")
+    ) {
+
+        category = "Security";
+        subCategory = "Security Incident";
+        group = "Security Operations";
+
+        priority = "Critical";
+
+        action = "Automatically escalate to Security Team";
+
+    }
+
+
+    document.getElementById("rTicket").innerText = ticket;
+    document.getElementById("rCategory").innerText = category;
+    document.getElementById("rSubCategory").innerText = subCategory;
+    document.getElementById("rPriority").innerText = priority;
+    document.getElementById("rGroup").innerText = group;
+    document.getElementById("rAction").innerText = action;
+
+    document.getElementById("result").style.display = "block";
+
+}
+
+</script>
+
+</body>
+</html>
